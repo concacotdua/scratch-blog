@@ -1,0 +1,13 @@
+{
+  "tittle": "asdasdasdasd",
+  "content": "asdasdasdasd",
+  "author": {
+    "name": "asdasdasdasd",
+    "email": "asdasdasdasd",
+    "image": "asdasdasdasd"
+  },
+  "published": true,
+  "created_at": "2021-01-01",
+  "updated_at": "2021-01-01",
+  "published_at": "2021-01-01"
+}
