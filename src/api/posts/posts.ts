@@ -22,5 +22,4 @@ export const http = {
         const { error } = await supabase.from("posts").delete().eq("id", id);
         return error;
     },
-
 };

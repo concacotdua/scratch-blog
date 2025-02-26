@@ -13,7 +13,12 @@ export default function EditPostPage() {
     const { id: postId } = useParams();
     const queryClient = useQueryClient();
 
-    const { data: post, isPending } = useQuery({ queryKey: ['post', postId], queryFn: () => http.fetchPost(postId as string), enabled: !!postId });
+    const { data: post, isPending } = useQuery({
+        queryKey: ["post", postId],
+        queryFn: () => http.fetchPost(postId as string),
+        enabled: !!postId,
+    });
+
     const updatePostMutation = useMutation({
         mutationFn: (post: Post) => http.updatePost(postId as string, post),
         onSuccess: () => {
@@ -23,7 +28,8 @@ export default function EditPostPage() {
         onError: (error) => {
             alert("Lỗi khi cập nhật bài viết: " + error.message);
         },
-    })
+    });
+
     const { register, handleSubmit, setValue } = useForm();
     const [content, setContent] = useState("");
 
@@ -31,7 +37,7 @@ export default function EditPostPage() {
         if (post) {
             setValue("title", post.title);
             setValue("image_thumbnail", post.image_thumbnail);
-            setContent(post.content);
+            setContent(post.content || "");
         }
     }, [post, setValue]);
 
@@ -45,10 +51,14 @@ export default function EditPostPage() {
         });
     };
 
+    const handleCancel = () => {
+        router.push(`/posts`);
+    };
+
     if (isPending) return <p>Đang tải...</p>;
 
     return (
-        <main className="max-w-2xl mx-auto py-10 px-6 sm:px-10 bg-white shadow-lg rounded-lg">
+        <main className="max-w-3xl mt-6 mx-auto py-10 px-6 sm:px-10 bg-white shadow-lg rounded-lg">
             <h1 className="text-3xl font-semibold text-gray-800 mb-6 text-center">
                 ✏️ Chỉnh sửa bài viết
             </h1>
@@ -70,8 +80,13 @@ export default function EditPostPage() {
 
                 {/* Nội dung bài viết */}
                 <div>
-                    <label className="block text-gray-700 font-medium mb-1">Nội dung bài viết</label>
-                    <EditorTap description={content} onChange={setContent} />
+                    <label className="block text-gray-700 font-medium mb-1">
+                        Nội dung bài viết
+                    </label>
+                    <EditorTap
+                        content={content}
+                        onChange={(newContent) => setContent(newContent)}
+                    />
                 </div>
 
                 {/* Ảnh thumbnail */}
@@ -85,7 +100,6 @@ export default function EditPostPage() {
                         className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                         placeholder="Nhập URL ảnh..."
                     />
-                    {/* Preview hình ảnh nếu có */}
                     {post?.image_thumbnail && (
                         <div className="mt-3">
                             <img
@@ -97,17 +111,27 @@ export default function EditPostPage() {
                     )}
                 </div>
 
-                {/* Nút lưu thay đổi */}
-                <button
-                    type="submit"
-                    disabled={updatePostMutation.isPending}
-                    className="w-full py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition duration-200 flex justify-center items-center gap-2"
-                >
-                    <Save />
-                    <span>{updatePostMutation.isPending ? "Đang lưu..." : "Lưu thay đổi"}</span>
-                </button>
+                {/* Nút lưu thay đổi & Hủy */}
+                <div className="flex gap-4">
+                    <button
+                        type="submit"
+                        disabled={updatePostMutation.isPending}
+                        className="flex-1 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition duration-200 flex justify-center items-center gap-2"
+                    >
+                        <Save />
+                        <span>{updatePostMutation.isPending ? "Đang lưu..." : "Lưu thay đổi"}</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={handleCancel}
+                        className="flex-1 py-3 bg-gray-300 text-gray-800 font-semibold rounded-lg hover:bg-gray-400 transition duration-200"
+                    >
+                        Hủy
+                    </button>
+                </div>
             </form>
         </main>
-
     );
 }
+

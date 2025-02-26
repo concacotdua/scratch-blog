@@ -1,4 +1,6 @@
 import { Popover, Transition } from "@headlessui/react";
+import { Editor } from "@tiptap/react";
+import { LucideIcon } from "lucide-react";
 import { Fragment } from "react";
 
 interface ToolbarButtonProps {
@@ -6,6 +8,11 @@ interface ToolbarButtonProps {
     onClick: () => void;
     children: React.ReactNode;
     className?: string;
+}
+
+interface ToolbarGroupProps {
+    editor: Editor | null;
+    tools: { icon: LucideIcon; command: (editor: Editor) => void; tooltip: string }[];
 }
 
 export default function ToolbarButton({ tooltip, onClick, children, className = "" }: ToolbarButtonProps) {
@@ -33,3 +40,22 @@ export default function ToolbarButton({ tooltip, onClick, children, className = 
         </Popover>
     );
 }
+
+export const ToolbarGroup = ({ editor, tools }: ToolbarGroupProps) => {
+    if (!editor) return null;
+
+    const handleCommand = (command: (editor: Editor) => void) => {
+        command(editor);
+        editor.view.dom.focus(); // Giữ focus trong editor
+    };
+
+    return (
+        <div className="flex gap-2">
+            {tools.map(({ icon: Icon, command, tooltip }, index) => (
+                <ToolbarButton key={index} tooltip={tooltip} onClick={() => handleCommand(command)}>
+                    <Icon className="w-5 h-6" />
+                </ToolbarButton>
+            ))}
+        </div>
+    );
+};

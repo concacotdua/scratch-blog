@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Globe } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
@@ -11,8 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useForm } from "react-hook-form";
-import { useQuery } from "@tanstack/react-query";
-import { http } from "@/api/posts/posts";
+
 
 export default function NewPostPage() {
     const { status } = useSession();
@@ -73,7 +72,7 @@ export default function NewPostPage() {
                     />
 
                     {/* Trình soạn thảo nội dung */}
-                    <EditorTap onChange={setContent} description={""} />
+                    <EditorTap onChange={setContent} content={""} />
 
                     {/* Grid layout cho các input */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

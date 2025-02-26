@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
@@ -8,28 +8,37 @@ import Table from "@tiptap/extension-table";
 import TableRow from "@tiptap/extension-table-row";
 import TableCell from "@tiptap/extension-table-cell";
 import TableHeader from "@tiptap/extension-table-header";
-import Heading from "@tiptap/extension-heading";
-import { supabase } from "@/lib/supabase";
-
+import Placeholder from "@tiptap/extension-placeholder";
 import { toast } from "sonner";
-import ToolbarButton from "./ToolBar";
+import { supabase } from "@/lib/supabase";
+import { ToolbarGroup } from "./ToolBar";
+
+import { CodeBlockLowlight } from "@tiptap/extension-code-block-lowlight";
+import { createLowlight } from "lowlight"; // Import đúng cách
+import js from "highlight.js/lib/languages/javascript"; // Import ngôn ngữ bạn muốn hỗ trợ
+import ts from "highlight.js/lib/languages/typescript";
+import TextAlign from "@tiptap/extension-text-align";
+import "highlight.js/styles/github-dark.css";
+import { alignmentTools, codeTools, tableTools } from "../utils/editor";
+import { formattingTools } from "../utils/editor";
+import { Save } from "lucide-react";
 
 export interface EditorTapProps {
-    description: string;
-    onChange: (description: string) => void;
+    content?: string;
+    onChange: (value: string) => void;
 }
 
-export default function EditorTap({ description, onChange }: EditorTapProps) {
+export default function EditorTap({ content, onChange }: EditorTapProps) {
     const [loading, setLoading] = useState(false);
+
+    const lowlight = createLowlight();
+    lowlight.register("js", js);
+    lowlight.register("ts", ts);
 
     const editor = useEditor({
         extensions: [
             StarterKit.configure({
-
-            }),
-            Heading.configure({
-                HTMLAttributes: { class: "text-xl font-bold" },
-                levels: [2],
+                blockquote: { HTMLAttributes: { class: "text-gray-600 italic border-l-4 pl-4 border-gray-300" } },
             }),
             Link.configure({
                 openOnClick: false,
@@ -38,17 +47,25 @@ export default function EditorTap({ description, onChange }: EditorTapProps) {
             }),
             Image.configure({ allowBase64: true }),
             Highlight,
-            Table.configure({
-                resizable: true,
-                HTMLAttributes: { class: "border-collapse border border-gray-300" },
-            }),
+            Table.configure({ resizable: true }),
             TableRow,
             TableCell,
             TableHeader,
+            CodeBlockLowlight.configure({
+                lowlight, // Fix lỗi bằng cách truyền instance của lowlight
+                HTMLAttributes: { class: "bg-gray-900 text-white p-4 rounded-md font-mono overflow-x-auto" },
+            }),
+            Placeholder.configure({
+                placeholder: "Nhập nội dung tại đây...",
+                emptyEditorClass: "text-gray-400 italic",
+            }),
+            TextAlign.configure({
+                types: ["heading", "paragraph"], // Cho phép căn lề text
+            }),
         ],
         editorProps: {
             attributes: {
-                class: "prose prose-lg max-w-none rounded-md min-h-[400px] p-2 text-lg focus-within:ring-2 focus-within:ring-blue-500",
+                class: "prose max-w-none min-h-[400px] p-4 border border-gray-300 rounded-lg shadow focus:ring-2 focus:ring-blue-500",
             },
         },
         onUpdate: ({ editor }) => {
@@ -56,64 +73,55 @@ export default function EditorTap({ description, onChange }: EditorTapProps) {
             content = content.replace(/<img[^>]*>/g, "");
             onChange(content);
         },
-        content: "<p>Viết nội dung của bạn ở đây...</p>",
+        content: content,
     });
-
+    useEffect(() => {
+        if (editor && content !== editor.getHTML()) {
+            editor.commands.setContent(content || "");
+        }
+    }, [content, editor]);
     if (!editor) return null;
 
     const handleSave = async () => {
         setLoading(true);
-        const content = editor.getJSON(); // Lưu JSON, không lưu HTML
-
+        const content = editor.getJSON();
         const { error } = await supabase.from("posts").insert([{ content }]);
         setLoading(false);
 
         if (error) {
             console.error("Lỗi lưu vào Supabase:", error);
-            toast.error("Lỗi lưu vào Supabase:", { description: error.message });
+            toast.error("Lỗi lưu vào Supabase", { description: error.message });
         } else {
             toast.success("Lưu thành công!");
         }
     };
+    const handleCommand = (command: () => void) => {
+        if (!editor) return;
+        command();
+        editor.view.dom.focus();
+    };
 
     return (
         <div className="border border-gray-300 p-4 rounded-lg shadow-md bg-white">
-            <div className="mb-3 flex flex-wrap gap-2">
-                <ToolbarButton tooltip="Bold" onClick={() => editor.chain().focus().toggleBold().run()}>
-                    <strong>B</strong>
-                </ToolbarButton>
-                <ToolbarButton tooltip="Italic" onClick={() => editor.chain().focus().toggleItalic().run()}>
-                    <em>I</em>
-                </ToolbarButton>
-                <ToolbarButton tooltip="Highlight" onClick={() => editor.chain().focus().toggleHighlight().run()} className="bg-yellow-200">
-                    H
-                </ToolbarButton>
-                <ToolbarButton tooltip="Paragraph" onClick={() => editor.chain().focus().setParagraph().run()}>
-                    P
-                </ToolbarButton>
-                <ToolbarButton tooltip="Code" onClick={() => editor.chain().focus().setCode().run()}>
-                    {"</>"}
-                </ToolbarButton>
-                <ToolbarButton tooltip="Insert Table" onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3 }).run()}>
-                    📊
-                </ToolbarButton>
+            <div className="mb-3 flex flex-wrap gap-2 items-center">
+                <ToolbarGroup editor={editor} tools={formattingTools} />
+                <ToolbarGroup editor={editor} tools={tableTools} />
+                <ToolbarGroup editor={editor} tools={alignmentTools} />
+                <ToolbarGroup editor={editor} tools={codeTools} />
                 <button
                     onClick={handleSave}
-                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-all disabled:opacity-50"
+                    className="py-[4px] px-3 bg-blue-500 text-white rounded hover:bg-blue-600 transition-all disabled:opacity-50"
                     disabled={loading}
                 >
-                    {loading ? "Đang lưu..." : "💾 Lưu bài viết"}
+                    {loading ? "Đang lưu..." : <Save className="w-5 h-6" />}
                 </button>
             </div>
-
             <div
-                className="border border-gray-200 rounded-lg min-h-[400px] p-3 text-lg focus-within:ring-2 focus-within:ring-blue-500"
+                className="border border-gray-200 rounded-lg min-h-[400px] p-3 text-lg focus:ring-2 focus:ring-blue-500"
                 onClick={() => editor.chain().focus().run()}
             >
-                <EditorContent editor={editor} className="w-full h-full outline-none" />
+                <EditorContent editor={editor} className="max-w-[830px] h-full outline-none mx-auto" />
             </div>
         </div>
     );
 }
-
-

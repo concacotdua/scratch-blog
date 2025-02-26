@@ -1,5 +1,7 @@
 
 import ButtonDashboard from "./components/ButtonDashboard";
+import { HyperText } from "@/components/magicui/hyper-text";
+
 export default function Home() {
 
   return (
@@ -7,9 +9,8 @@ export default function Home() {
       <div className="flex flex-col justify-center items-center space-y-10 mt-12 sm:mt-24 md:mt-32">
         <h1 className="text-4xl font-bold text-center">Welcome to Scratch Blog</h1>
         <div className="text-4xl sm:text-7xl font-bold capitalize">
-          <span className="block">
-            A blog for scratch enthusiasts
-          </span>
+
+          <HyperText>A blog for scratch enthusiasts</HyperText>
           <span className="block">
             <span className="text-green-600">Scratch</span>
             <span className="text-gray-600">Dev</span>

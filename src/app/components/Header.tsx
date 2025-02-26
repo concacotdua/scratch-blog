@@ -10,11 +10,12 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link";
-import { Terminal } from "lucide-react";
+import { Terminal, User } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { LogoDev } from "@/icons/logo";
+import { RainbowButton } from "@/components/magicui/rainbow-button";
 
 
 export default function Header() {
@@ -22,7 +23,7 @@ export default function Header() {
     const isLoading = status === "loading";
 
     return (
-        <header className="border-b border-gray-100">
+        <header className="border-b border-black/10 shadow-md px-4">
             <div className="container mx-auto py-4 flex justify-between items-center">
                 <p className="flex items-center space-x-1 text-green-600">
                     <Link href="/" className="text-xl font-bold flex items-center">
@@ -85,9 +86,9 @@ export default function Header() {
                         )}
                     </div>
                 ) : (
-                    <button className="bg-gradient-to-r from-green-400 to-indigo-300 text-white px-3 py-2 rounded-lg" onClick={() => signIn()}>
-                        Login
-                    </button>
+                    <RainbowButton className="bg-gradient-to-r from-green-400 to-rose-300 text-black px-3 py-2 rounded-lg" onClick={() => signIn()}>
+                        <User className="w-4 h-4" />
+                    </RainbowButton>
                 )}
             </div>
         </header >
