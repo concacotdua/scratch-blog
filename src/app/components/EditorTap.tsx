@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+
+import { useState, useEffect } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
+
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
@@ -9,16 +11,19 @@ import TableRow from "@tiptap/extension-table-row";
 import TableCell from "@tiptap/extension-table-cell";
 import TableHeader from "@tiptap/extension-table-header";
 import Placeholder from "@tiptap/extension-placeholder";
+import Blockquote from "@tiptap/extension-blockquote";
+
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
 import { ToolbarGroup } from "./ToolBar";
-
 import { CodeBlockLowlight } from "@tiptap/extension-code-block-lowlight";
 import { createLowlight } from "lowlight"; // Import đúng cách
+
+import TextAlign from "@tiptap/extension-text-align";
 import js from "highlight.js/lib/languages/javascript"; // Import ngôn ngữ bạn muốn hỗ trợ
 import ts from "highlight.js/lib/languages/typescript";
-import TextAlign from "@tiptap/extension-text-align";
 import "highlight.js/styles/github-dark.css";
+
 import { alignmentTools, codeTools, tableTools } from "../utils/editor";
 import { formattingTools } from "../utils/editor";
 import { Save } from "lucide-react";
@@ -38,12 +43,13 @@ export default function EditorTap({ content, onChange }: EditorTapProps) {
     const editor = useEditor({
         extensions: [
             StarterKit.configure({
-                blockquote: { HTMLAttributes: { class: "text-gray-600 italic border-l-4 pl-4 border-gray-300" } },
+                blockquote: false,
+                codeBlock: false,
             }),
             Link.configure({
                 openOnClick: false,
                 autolink: true,
-                HTMLAttributes: { class: "text-blue-500 underline" },
+                HTMLAttributes: { class: "text-blue-500 underline hover:text-blue-700 transition" },
             }),
             Image.configure({ allowBase64: true }),
             Highlight,
@@ -52,34 +58,44 @@ export default function EditorTap({ content, onChange }: EditorTapProps) {
             TableCell,
             TableHeader,
             CodeBlockLowlight.configure({
-                lowlight, // Fix lỗi bằng cách truyền instance của lowlight
-                HTMLAttributes: { class: "bg-gray-900 text-white p-4 rounded-md font-mono overflow-x-auto" },
+                lowlight,
+                HTMLAttributes: {
+                    class: "bg-gray-900 text-white p-4 rounded-md font-mono overflow-x-auto text-xl leading-relaxed"
+                },
             }),
             Placeholder.configure({
                 placeholder: "Nhập nội dung tại đây...",
                 emptyEditorClass: "text-gray-400 italic",
             }),
             TextAlign.configure({
-                types: ["heading", "paragraph"], // Cho phép căn lề text
+                types: ["heading", "paragraph", "code", "codeBlock", "image"],
+            }),
+            Blockquote.configure({
+                HTMLAttributes: {
+                    class: "text-gray-700 italic border-l-4 pl-4 border-gray-400 bg-gray-100 py-2 px-4 rounded-md"
+                },
             }),
         ],
         editorProps: {
             attributes: {
-                class: "prose max-w-none min-h-[400px] p-4 border border-gray-300 rounded-lg shadow focus:ring-2 focus:ring-blue-500",
+                class: "prose max-w-screen min-h-[400px] p-6 border border-gray-300 rounded-lg shadow-lg focus:ring-2 focus:ring-blue-500 text-xl leading-relaxed",
             },
         },
         onUpdate: ({ editor }) => {
             let content = editor.getHTML();
-            content = content.replace(/<img[^>]*>/g, "");
             onChange(content);
         },
         content: content,
     });
+
+
     useEffect(() => {
         if (editor && content !== editor.getHTML()) {
             editor.commands.setContent(content || "");
         }
     }, [content, editor]);
+
+
     if (!editor) return null;
 
     const handleSave = async () => {
@@ -95,11 +111,7 @@ export default function EditorTap({ content, onChange }: EditorTapProps) {
             toast.success("Lưu thành công!");
         }
     };
-    const handleCommand = (command: () => void) => {
-        if (!editor) return;
-        command();
-        editor.view.dom.focus();
-    };
+
 
     return (
         <div className="border border-gray-300 p-4 rounded-lg shadow-md bg-white">
@@ -120,7 +132,7 @@ export default function EditorTap({ content, onChange }: EditorTapProps) {
                 className="border border-gray-200 rounded-lg min-h-[400px] p-3 text-lg focus:ring-2 focus:ring-blue-500"
                 onClick={() => editor.chain().focus().run()}
             >
-                <EditorContent editor={editor} className="max-w-[830px] h-full outline-none mx-auto" />
+                <EditorContent editor={editor} className="w-full max-w-7xl h-auto outline-none mx-auto" />
             </div>
         </div>
     );

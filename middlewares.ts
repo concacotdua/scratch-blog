@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { withAuth } from "next-auth/middleware";
 export default withAuth(
     function middleware(req) {
-        // Kiểm tra session có tồn tại không (req.nextauth.token sẽ là undefined nếu chưa login)
+        console.log("Middleware chạy:", req.nextUrl.pathname);
         if (!req.nextauth.token) {
             return NextResponse.redirect(new URL("/", req.url)); // Chuyển hướng về trang chủ
         }
@@ -17,5 +17,5 @@ export default withAuth(
 
 // 🔒 Bảo vệ các route `/posts/**`
 export const config = {
-    matcher: ["/posts(.*)"],
+    matcher: ["/posts/:path*", "/posts/:id+"],
 };

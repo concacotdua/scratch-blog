@@ -1,6 +1,4 @@
-// components/SessionProvider.tsx
-"use client"; // 👈 Cần thêm để sử dụng React Context trong Next.js App Router
-
+"use client";
 import { SessionProvider } from "next-auth/react";
 import { ReactNode } from "react";
 

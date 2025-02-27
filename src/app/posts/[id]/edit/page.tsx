@@ -22,8 +22,8 @@ export default function EditPostPage() {
     const updatePostMutation = useMutation({
         mutationFn: (post: Post) => http.updatePost(postId as string, post),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["posts"] });
             router.push(`/posts/${postId}`);
+            queryClient.invalidateQueries({ queryKey: ["posts"] });
         },
         onError: (error) => {
             alert("Lỗi khi cập nhật bài viết: " + error.message);
@@ -58,7 +58,7 @@ export default function EditPostPage() {
     if (isPending) return <p>Đang tải...</p>;
 
     return (
-        <main className="max-w-3xl mt-6 mx-auto py-10 px-6 sm:px-10 bg-white shadow-lg rounded-lg">
+        <main className="w-full max-w-7xl mt-6 mx-auto py-10 px-6 sm:px-10 bg-white shadow-lg rounded-lg">
             <h1 className="text-3xl font-semibold text-gray-800 mb-6 text-center">
                 ✏️ Chỉnh sửa bài viết
             </h1>
