@@ -44,15 +44,17 @@ export default function ToolbarButton({ tooltip, onClick, children, className = 
 export const ToolbarGroup = ({ editor, tools }: ToolbarGroupProps) => {
     if (!editor) return null;
 
-    const handleCommand = (command: (editor: Editor) => void) => {
-        command(editor);
-        editor.view.dom.focus(); // Giữ focus trong editor
-    };
-
     return (
         <div className="flex gap-2">
             {tools.map(({ icon: Icon, command, tooltip }, index) => (
-                <ToolbarButton key={index} tooltip={tooltip} onClick={() => handleCommand(command)}>
+                <ToolbarButton
+                    key={index}
+                    tooltip={tooltip}
+                    onClick={() => {
+                        command(editor);
+                        editor.commands.focus();
+                    }}
+                >
                     <Icon className="w-5 h-6" />
                 </ToolbarButton>
             ))}

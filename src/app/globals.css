@@ -2,11 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+.ProseMirror table {
+  border-collapse: collapse;
+  width: 100%;
+}
 
+.ProseMirror th,
+.ProseMirror td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.ProseMirror th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
 
 @layer base {
   :root {
-
     --background: 0 0% 100%;
 
     --foreground: 224 71.4% 4.1%;
@@ -55,8 +68,7 @@
 
     --chart-5: 27 87% 67%;
 
-    --radius: 0.5rem
-  ;
+    --radius: 0.5rem;
 
     --color-1: 0 100% 63%;
 
@@ -66,9 +78,9 @@
 
     --color-4: 195 100% 63%;
 
-    --color-5: 90 100% 63%}
+    --color-5: 90 100% 63%;
+  }
   .dark {
-
     --background: 224 71.4% 4.1%;
 
     --foreground: 210 20% 98%;
@@ -115,8 +127,7 @@
 
     --chart-4: 280 65% 60%;
 
-    --chart-5: 340 75% 55%
-  ;
+    --chart-5: 340 75% 55%;
 
     --color-1: 0 100% 63%;
 
@@ -126,10 +137,9 @@
 
     --color-4: 195 100% 63%;
 
-    --color-5: 90 100% 63%}
+    --color-5: 90 100% 63%;
+  }
 }
-
-
 
 @layer base {
   * {

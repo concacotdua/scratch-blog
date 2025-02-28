@@ -4,12 +4,12 @@ import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { Globe } from "lucide-react";
 import { useSession } from "next-auth/react";
-import EditorTap from "@/app/components/EditorTap";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useForm } from "react-hook-form";
+import TiptapEditor from "@/app/components/TiptapEditor";
 
 export default function NewPostPage() {
     const { status } = useSession();
@@ -67,11 +67,8 @@ export default function NewPostPage() {
                         {...register("title", { required: true })}
                         className="w-full"
                     />
+                    <TiptapEditor onChange={setContent} content={content} />
 
-                    {/* Trình soạn thảo nội dung */}
-                    <EditorTap onChange={setContent} content={content} />
-
-                    {/* Grid layout cho các input */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <Input
                             type="text"

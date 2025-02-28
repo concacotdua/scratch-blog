@@ -2,11 +2,11 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { Save } from "lucide-react";
-import EditorTap from "@/app/components/EditorTap";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { http } from "@/api/posts/posts";
 import { Post } from "@/types/Post";
+import TiptapEditor from "@/app/components/TiptapEditor";
 
 export default function EditPostPage() {
     const router = useRouter();
@@ -64,7 +64,6 @@ export default function EditPostPage() {
             </h1>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                {/* Tiêu đề bài viết */}
                 <div>
                     <label className="block text-gray-700 font-medium mb-1">
                         Tiêu đề bài viết
@@ -83,13 +82,12 @@ export default function EditPostPage() {
                     <label className="block text-gray-700 font-medium mb-1">
                         Nội dung bài viết
                     </label>
-                    <EditorTap
+                    <TiptapEditor
                         content={content}
                         onChange={(newContent) => setContent(newContent)}
                     />
                 </div>
 
-                {/* Ảnh thumbnail */}
                 <div>
                     <label className="block text-gray-700 font-medium mb-1">
                         Ảnh Thumbnail (URL)
@@ -111,7 +109,6 @@ export default function EditPostPage() {
                     )}
                 </div>
 
-                {/* Nút lưu thay đổi & Hủy */}
                 <div className="flex gap-4">
                     <button
                         type="submit"

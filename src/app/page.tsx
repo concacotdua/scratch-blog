@@ -8,7 +8,6 @@ export default function Home() {
   return (
     <section>
       <div className="flex flex-col justify-center items-center space-y-10 mt-12 sm:mt-24 md:mt-32">
-
         <SparklesText text="Welcome to Scratch Blog" />
         <div className="text-4xl sm:text-7xl font-bold capitalize">
           <p className="text-center">A blog for scratch enthusiasts</p>
