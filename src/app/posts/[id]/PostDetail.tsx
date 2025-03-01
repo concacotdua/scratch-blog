@@ -8,20 +8,21 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { formatDate } from "@/app/utils/utils";
+import { Post } from "@/types/Post";
 
-interface PostDetailProps {
-    id: string;
-}
-
-export default function PostDetail({ id }: PostDetailProps) {
+export default function PostDetail({ data }: { data: Post }) {
+    if (!data) {
+        return <p className="text-red-500">❌ Không thể tải bài viết.</p>;
+    }
     const {
         data: post,
         isLoading,
         isError,
     } = useQuery({
-        queryKey: ["post", id],
-        queryFn: () => http.fetchPost(id as string),
-        enabled: !!id, // Chỉ fetch nếu có ID
+        queryKey: ["post", data.id],
+        queryFn: () => http.fetchPost(data.id),
+        enabled: !data.id,
+        initialData: data
     });
 
     if (isLoading) {
@@ -33,13 +34,14 @@ export default function PostDetail({ id }: PostDetailProps) {
     }
 
     if (isError || !post) {
+        console.log(isError, post);
         return (
             <main className="container mx-auto py-6 sm:py-10 px-4 text-center">
                 <p className="text-red-500">❌ Không thể tải bài viết.</p>
             </main>
         );
     }
-
+    const fallbackText = post.author.name ? post.author.name.charAt(0) : "CN";
     return (
         <main className="container w-full max-w-7xl mt-6 mx-auto py-10 px-6 sm:px-10 bg-white shadow-lg rounded-lg">
             <Link href='/posts' className="mb-6">
@@ -51,7 +53,7 @@ export default function PostDetail({ id }: PostDetailProps) {
                 <div className="flex items-center justify-start text-gray-500 gap-3 text-sm mb-6">
                     <Avatar>
                         <AvatarImage src={post.author.avatar_url} />
-                        <AvatarFallback className="bg-purple-500 text-black font-bold text-xl">{post.author.name?.charAt(0, 1) || "CN"}</AvatarFallback>
+                        <AvatarFallback className="bg-purple-500 text-black font-bold text-xl">{fallbackText}</AvatarFallback>
                     </Avatar>
                     <p className="text-gray-700 font-semibold">By {post.author.name || post.author.email}</p>
                     <div className="flex items-center space-x-1 ml-2">

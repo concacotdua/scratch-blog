@@ -3,5 +3,5 @@ import PostsClient from "./PostsClient";
 
 export default async function PostsPage() {
     const posts = await http.fetchPosts(); // Fetch trên server
-    return <PostsClient posts={posts ?? []} />;
+    return <PostsClient initialPosts={posts ?? []} />;
 }

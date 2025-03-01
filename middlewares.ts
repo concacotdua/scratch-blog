@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { withAuth } from "next-auth/middleware";
 export default withAuth(
     function middleware(req) {
-        console.log("Middleware chạy:", req.nextUrl.pathname);
         if (!req.nextauth.token) {
             return NextResponse.redirect(new URL("/", req.url)); // Chuyển hướng về trang chủ
         }

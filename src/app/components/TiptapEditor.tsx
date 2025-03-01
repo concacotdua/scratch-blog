@@ -54,6 +54,9 @@ const TiptapEditor = ({ content, onChange }: EditorTapProps) => {
             StarterKit.configure({
                 blockquote: false,
                 codeBlock: false,
+                bulletList: false,
+                orderedList: false,
+                listItem: false,
             }),
             Underline,
             FontFamily,
@@ -89,6 +92,7 @@ const TiptapEditor = ({ content, onChange }: EditorTapProps) => {
         editorProps: {
             attributes: {
                 class: "prose max-w-7xl min-h-[400px] p-6 border border-gray-300 rounded-lg shadow-lg focus:ring-2 focus:ring-blue-500 text-xl leading-relaxed",
+                spellcheck: "false",
             },
         },
         onUpdate: ({ editor }) => {
@@ -96,6 +100,7 @@ const TiptapEditor = ({ content, onChange }: EditorTapProps) => {
             onChange(content);
         },
         content: content,
+        immediatelyRender: true,
     });
     useEffect(() => {
         if (!isFullscreen && editor) {

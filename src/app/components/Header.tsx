@@ -2,7 +2,6 @@
 import Link from "next/link";
 import { LogoDev } from "@/icons/logo";
 
-
 import { useEffect, useState } from "react";
 import UserDropdown from "./UserDropdown";
 

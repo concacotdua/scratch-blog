@@ -1,5 +1,5 @@
 import {
-    Undo2, Redo2, Maximize, Bold, Italic, Underline, Highlighter,
+    Undo2, Redo2, Bold, Italic, Underline, Highlighter,
     Quote, Code, List, ListOrdered, AlignLeft, AlignCenter, AlignRight,
     Table, Columns, Rows, Image, TableCellsSplit, TableColumnsSplit, TableRowsSplit,
     Rows2,

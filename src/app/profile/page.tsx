@@ -10,13 +10,12 @@ import { supabase } from "@/lib/supabase";
 
 export default function ProfilePage() {
     const { data: session, update } = useSession();
-    const { register, handleSubmit, setValue } = useForm();
+    const { register, handleSubmit } = useForm();
     const [avatarPreview, setAvatarPreview] = useState(session?.user?.image || "");
 
     const onSubmit = async (data: any) => {
         data.avatar = avatarPreview; // Gán avatar mới vào data trước khi gửi
 
-        console.log("Dữ liệu gửi lên API:", data); // Log kiểm tra dữ liệu
 
         const res = await fetch("/api/profile", {
             method: "POST",

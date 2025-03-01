@@ -6,7 +6,6 @@ import Link from "next/link";
 
 export default function ButtonDashboard() {
     const { data: session } = useSession();
-
     return (
         <div>
             {session ? (

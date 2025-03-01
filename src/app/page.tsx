@@ -25,6 +25,6 @@ export default function Home() {
         </div>
         <ButtonDashboard />
       </div>
-    </section>
+    </section >
   );
 }
