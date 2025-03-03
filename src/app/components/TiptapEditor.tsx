@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
@@ -21,14 +22,17 @@ import Link from '@tiptap/extension-link';
 import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
 import { createLowlight } from 'lowlight';
-import 'highlight.js/styles/github.css';
-import { useEffect, useState } from 'react';
-import js from "highlight.js/lib/languages/javascript";
-import ts from "highlight.js/lib/languages/typescript";
+import js from 'highlight.js/lib/languages/javascript';
+import ts from 'highlight.js/lib/languages/typescript';
+import html from 'highlight.js/lib/languages/xml';
+import css from 'highlight.js/lib/languages/css';
+import python from 'highlight.js/lib/languages/python';
+import 'highlight.js/styles/github-dark.css';
 import { ToolbarGroup } from './ToolBar';
 import { alignmentTools, insertTools, tableTools, undoRedoTools } from '../utils/editor';
 import { formattingTools } from '../utils/editor';
 import { Maximize, Minimize } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export interface EditorTapProps {
     content?: string;
@@ -37,8 +41,11 @@ export interface EditorTapProps {
 
 const TiptapEditor = ({ content, onChange }: EditorTapProps) => {
     const lowlight = createLowlight();
-    lowlight.register("js", js);
-    lowlight.register("ts", ts);
+    lowlight.register('js', js);
+    lowlight.register('ts', ts);
+    lowlight.register('html', html);
+    lowlight.register('css', css);
+    lowlight.register('python', python);
 
     const [isFullscreen, setIsFullscreen] = useState(false);
     const displayTools = [
@@ -69,9 +76,31 @@ const TiptapEditor = ({ content, onChange }: EditorTapProps) => {
                 types: ["heading", "paragraph", "code", "codeBlock", "image"],
             }),
             CodeBlockLowlight.configure({
-                lowlight, HTMLAttributes: {
-                    class: "bg-gray-900 text-white p-4 rounded-md font-mono overflow-x-auto text-xl leading-relaxed"
+                lowlight,
+                HTMLAttributes: {
+                    class: cn(
+                        "relative rounded-lg overflow-hidden",
+                        "bg-gray-900 dark:bg-gray-950",
+                        "border border-gray-800 dark:border-gray-700",
+                        "shadow-lg",
+                        "my-4",
+                        "group",
+                        "font-mono text-sm leading-relaxed",
+                        "p-4",
+                        "prose-pre:bg-gray-900 dark:prose-pre:bg-gray-950",
+                        "prose-pre:text-gray-100",
+                        "prose-pre:border-gray-800 dark:prose-pre:border-gray-700",
+                        "prose-pre:shadow-lg",
+                        "prose-pre:my-4",
+                        "prose-pre:p-4",
+                        "prose-pre:overflow-x-auto",
+                        "prose-pre:rounded-lg",
+                        "prose-pre:font-mono",
+                        "prose-pre:text-sm",
+                        "prose-pre:leading-relaxed"
+                    ),
                 },
+                defaultLanguage: 'javascript',
             }),
             Table.configure({ resizable: true }),
             TableRow,

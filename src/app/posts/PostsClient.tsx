@@ -3,7 +3,6 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { Post } from "@/types/Post";
 import PostList from "./PostList";
 import { useQuery } from "@tanstack/react-query";
 import { http } from "@/api/posts/posts";
@@ -31,8 +30,8 @@ export default function PostsClient() {
                 </div>
                 {isFetching ? (
                     <div className="relative grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 px-4 md:px-6 auto-rows-fr max-w-7xl mx-auto">
-                        {Array(6).fill(0).map((_, index) => {
-                            return <SkeletonPosts key={index} />
+                        {[1, 2, 3, 4, 5, 6].map((i) => {
+                            return <SkeletonPosts key={i} />
                         })}
                     </div>
 
